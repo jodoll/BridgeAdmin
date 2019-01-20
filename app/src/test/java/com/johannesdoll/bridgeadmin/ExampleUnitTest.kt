@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2019 Johannes Doll. All rights reserved.
+ */
+
 package com.johannesdoll.bridgeadmin
 
 import org.assertj.core.api.Assertions.assertThat

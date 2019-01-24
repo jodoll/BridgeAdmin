@@ -17,12 +17,17 @@ class LoginUseCase(
         callback.onLoginSuccessful()
     }
 
+    override fun onChallengePresented() {
+        callback.onChallengePresented()
+    }
+
     override fun onError() {
         callback.onLoginFailed()
     }
 
     interface LoginOutputPort {
         fun onLoginSuccessful() {}
+        fun onChallengePresented()
         fun onLoginFailed()
     }
 

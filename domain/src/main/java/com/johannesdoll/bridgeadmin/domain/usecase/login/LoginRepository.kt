@@ -10,6 +10,7 @@ interface LoginRepository {
 
     interface Result {
         fun onSuccess()
+        fun onChallengePresented()
         fun onError()
     }
 }

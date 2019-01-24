@@ -54,6 +54,17 @@ internal class LoginUseCaseTest {
         }
     }
 
+    @Test
+    fun `When login requests challenge, on show Challenge is called`() {
+        answerInRepo { result -> result.onChallengePresented() }
+
+        useCase.login("localhost")
+
+        verify {
+            callback.onChallengePresented()
+        }
+    }
+
     private fun answerInRepo(invocation: (LoginRepository.Result) -> Unit) {
         val result = slot<LoginRepository.Result>()
         every {

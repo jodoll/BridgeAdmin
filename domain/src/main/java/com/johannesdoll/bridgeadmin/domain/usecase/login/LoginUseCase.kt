@@ -17,8 +17,13 @@ class LoginUseCase(
         callback.onLoginSuccessful()
     }
 
+    override fun onError() {
+        callback.onLoginFailed()
+    }
+
     interface LoginOutputPort {
         fun onLoginSuccessful() {}
+        fun onLoginFailed()
     }
 
 }

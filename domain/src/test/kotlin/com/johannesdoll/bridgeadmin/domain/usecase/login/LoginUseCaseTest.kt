@@ -43,6 +43,17 @@ internal class LoginUseCaseTest {
         }
     }
 
+    @Test
+    fun `When login fails, on error is called`() {
+        answerInRepo { result -> result.onError() }
+
+        useCase.login("localhost")
+
+        verify {
+            callback.onLoginFailed()
+        }
+    }
+
     private fun answerInRepo(invocation: (LoginRepository.Result) -> Unit) {
         val result = slot<LoginRepository.Result>()
         every {

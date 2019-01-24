@@ -10,5 +10,6 @@ interface LoginRepository {
 
     interface Result {
         fun onSuccess()
+        fun onError()
     }
 }

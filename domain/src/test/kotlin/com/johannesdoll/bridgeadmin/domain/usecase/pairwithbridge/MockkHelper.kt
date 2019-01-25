@@ -2,7 +2,7 @@
  * Copyright (c) 2019 Johannes Doll. All rights reserved.
  */
 
-package com.johannesdoll.bridgeadmin.domain.usecase.login
+package com.johannesdoll.bridgeadmin.domain.usecase.pairwithbridge
 
 import io.mockk.mockk
 

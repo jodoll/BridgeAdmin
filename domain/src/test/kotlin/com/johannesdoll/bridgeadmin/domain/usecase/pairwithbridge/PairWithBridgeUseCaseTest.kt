@@ -4,6 +4,7 @@
 
 package com.johannesdoll.bridgeadmin.domain.usecase.pairwithbridge
 
+import com.johannesdoll.bridgeadmin.test.relaxedMockk
 import io.mockk.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

@@ -7,11 +7,13 @@ package com.johannesdoll.bridgeadmin.domain.usecase.pairwithbridge
 class PairWithBridgeUseCase(
     private val repo: PairWithBridgeRepository,
     private val credentialsRepository: PairWithBridgeCredentialsRepository,
+    private val deviceNameRepository: PairWithBridgeDeviceNameRepository,
     private val callback: OutputPort
 ) : PairWithBridgeRepository.Result {
 
     fun pair(address: String) {
-        repo.pair(address, this)
+        val deviceName = deviceNameRepository.getDeviceName()
+        repo.pair(address, deviceName, this)
     }
 
     override fun onSuccess(credentials: PairWithBridgeCredentialsRepository.Credentials) {

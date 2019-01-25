@@ -15,19 +15,30 @@ internal class PairWithBridgeUseCaseTest {
     private lateinit var useCase: PairWithBridgeUseCase
     private val remoteRepository: PairWithBridgeRepository = relaxedMockk()
     private val credentialsRepo: PairWithBridgeCredentialsRepository = relaxedMockk()
+    private val deviceNameRepo: PairWithBridgeDeviceNameRepository = relaxedMockk()
     private val callback: PairWithBridgeUseCase.OutputPort = relaxedMockk()
 
     @BeforeEach
     fun setUp() {
-        useCase = PairWithBridgeUseCase(remoteRepository, credentialsRepo, callback)
+        useCase = PairWithBridgeUseCase(remoteRepository, credentialsRepo, deviceNameRepo, callback)
     }
 
     @Test
-    fun `Given an network address, when pair is called, repo is called with address`() {
+    fun `Given a network address, when pair is called, repo is called with address`() {
         useCase.pair("localhost:5555")
 
         verify {
-            remoteRepository.pair("localhost:5555", any())
+            remoteRepository.pair("localhost:5555", any(), any())
+        }
+    }
+
+    @Test
+    fun `Given an device name, when pair is called, repo is called with devic name`() {
+        every { deviceNameRepo.getDeviceName() } answers { "Nexus 5" }
+        useCase.pair("localhost:5555")
+
+        verify {
+            remoteRepository.pair(any(), "Nexus 5", any())
         }
     }
 
@@ -79,7 +90,7 @@ internal class PairWithBridgeUseCaseTest {
     private fun answerInRepo(invocation: (PairWithBridgeRepository.Result) -> Unit) {
         val result = slot<PairWithBridgeRepository.Result>()
         every {
-            remoteRepository.pair(any(), capture(result))
+            remoteRepository.pair(any(), any(), capture(result))
         } answers {
             invocation(result.captured)
         }

@@ -6,7 +6,11 @@ package com.johannesdoll.bridgeadmin.domain.usecase.pairwithbridge
 
 interface PairWithBridgeRepository {
 
-    fun pair(address: String, callback: Result)
+    fun pair(
+        address: String,
+        deviceName: String,
+        callback: Result
+    )
 
     interface Result {
         fun onSuccess(credentials: PairWithBridgeCredentialsRepository.Credentials)

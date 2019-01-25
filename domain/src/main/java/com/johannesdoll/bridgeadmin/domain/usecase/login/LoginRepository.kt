@@ -9,7 +9,7 @@ interface LoginRepository {
     fun login(address: String, callback: Result)
 
     interface Result {
-        fun onSuccess()
+        fun onSuccess(credentials: LoginCredentialsRepository.Credentials)
         fun onChallengePresented()
         fun onError()
     }

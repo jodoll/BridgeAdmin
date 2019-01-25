@@ -4,10 +4,7 @@
 
 package com.johannesdoll.bridgeadmin.domain.usecase.login
 
-import io.mockk.clearMocks
-import io.mockk.every
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,12 +12,13 @@ import org.junit.jupiter.api.Test
 internal class LoginUseCaseTest {
 
     private lateinit var useCase: LoginUseCase
-    private val repo: LoginRepository = relaxedMockk()
+    private val remoteRepository: LoginRepository = relaxedMockk()
+    private val credentialsRepo: LoginCredentialsRepository = relaxedMockk()
     private val callback: LoginUseCase.LoginOutputPort = relaxedMockk()
 
     @BeforeEach
     fun setUp() {
-        useCase = LoginUseCase(repo, callback)
+        useCase = LoginUseCase(remoteRepository, credentialsRepo, callback)
     }
 
     @Test
@@ -28,13 +26,13 @@ internal class LoginUseCaseTest {
         useCase.login("localhost:5555")
 
         verify {
-            repo.login("localhost:5555", any())
+            remoteRepository.login("localhost:5555", any())
         }
     }
 
     @Test
     fun `When login is called successfully, on success is called on callback`() {
-        answerInRepo { result -> result.onSuccess() }
+        answerInRepo { result -> result.onSuccess(mockk()) }
 
         useCase.login("localhost")
 
@@ -65,10 +63,22 @@ internal class LoginUseCaseTest {
         }
     }
 
+    @Test
+    fun `When login was successful, credentials are stored`() {
+        val credentials: LoginCredentialsRepository.Credentials = mockk()
+        answerInRepo { result -> result.onSuccess(credentials) }
+
+        useCase.login("localhost")
+
+        verify {
+            credentialsRepo.storeCredentials(credentials)
+        }
+    }
+
     private fun answerInRepo(invocation: (LoginRepository.Result) -> Unit) {
         val result = slot<LoginRepository.Result>()
         every {
-            repo.login(any(), capture(result))
+            remoteRepository.login(any(), capture(result))
         } answers {
             invocation(result.captured)
         }
@@ -76,6 +86,6 @@ internal class LoginUseCaseTest {
 
     @AfterEach
     fun tearDown() {
-        clearMocks(repo, callback)
+        clearMocks(remoteRepository, callback)
     }
 }

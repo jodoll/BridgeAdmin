@@ -6,6 +6,7 @@ package com.johannesdoll.bridgeadmin.domain.usecase.login
 
 class LoginUseCase(
     private val repo: LoginRepository,
+    private val credentialsRepository: LoginCredentialsRepository,
     private val callback: LoginOutputPort
 ) : LoginRepository.Result {
 
@@ -13,7 +14,8 @@ class LoginUseCase(
         repo.login(address, this)
     }
 
-    override fun onSuccess() {
+    override fun onSuccess(credentials: LoginCredentialsRepository.Credentials) {
+        credentialsRepository.storeCredentials(credentials)
         callback.onLoginSuccessful()
     }
 

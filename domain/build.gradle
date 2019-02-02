@@ -10,9 +10,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    testImplementation "org.assertj:assertj-core:3.11.1"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.3.2"
-    testImplementation "io.mockk:mockk:1.9"
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    testImplementation "io.mockk:mockk:$mockk_version"
 }
 
 sourceCompatibility = "8"

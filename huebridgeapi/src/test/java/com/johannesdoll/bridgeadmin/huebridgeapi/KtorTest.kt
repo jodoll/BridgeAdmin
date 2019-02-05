@@ -69,7 +69,7 @@ class KtorTest {
     }
 
     @Serializable
-    data class AuthRequestBody(
+    private data class AuthRequestBody(
         @SerialName("devicetype")
         val deviceType: String
     )

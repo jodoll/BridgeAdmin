@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2019 Johannes Doll. All rights reserved.
+ */
+
+apply plugin: 'kotlin'
+
+dependencies {
+    //This is a bug
+    //noinspection DifferentStdlibGradleVersion
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation "org.assertj:assertj-core:$assertj_version"
+    implementation "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    implementation "io.mockk:mockk:$mockk_version"
+
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"

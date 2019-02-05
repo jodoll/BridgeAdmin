@@ -4,7 +4,7 @@
 
 package com.johannesdoll.bridgeadmin.huebridgeapi.pair
 
-import com.johannesdoll.bridgeadmin.huebridgeapi.relaxedMockk
+import com.johannesdoll.testhelper.relaxedMockk
 import io.ktor.client.HttpClient
 import io.mockk.clearMocks
 import org.assertj.core.api.Assertions

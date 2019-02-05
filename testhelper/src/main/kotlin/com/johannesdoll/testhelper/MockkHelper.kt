@@ -2,7 +2,7 @@
  * Copyright (c) 2019 Johannes Doll. All rights reserved.
  */
 
-package com.johannesdoll.bridgeadmin.huebridgeapi
+package com.johannesdoll.testhelper
 
 import io.mockk.mockk
 

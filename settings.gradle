@@ -2,4 +2,4 @@
  * Copyright (c) 2019 Johannes Doll. All rights reserved.
  */
 
-include ':app', ':domain', ':huebridgeapi'
+include ':app', ':domain', ':huebridgeapi', ':testhelper'

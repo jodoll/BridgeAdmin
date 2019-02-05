@@ -11,7 +11,6 @@ import io.ktor.client.engine.mock.MockHttpRequest
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Url
-import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -43,27 +42,17 @@ class BridgePairCallTest {
     }
 
     @Test
-    fun `When executing call, post to endpoint is made`() {
-
+    fun `When creating call, url ends with right suffix`() {
         val bridgeCall = BridgePairCall(client, "")
-        runBlocking {
-            bridgeCall.execute()
-        }
 
-        assertThat(recordedUrl).withFailMessage("Call not executed").isNotNull
-        assertThat(recordedUrl.toString()).endsWith("/api")
+        assertThat(bridgeCall.url.toString()).endsWith("/api")
     }
 
     @Test
-    fun `Given a host url, when executing call, host is url prefix`() {
+    fun `Given a host, when creating call, host is url prefix`() {
         val bridgeCall = BridgePairCall(client, "192.168.2.2")
 
-        runBlocking {
-            bridgeCall.execute()
-        }
-
-        assertThat(recordedUrl).isNotNull
-        assertThat(recordedUrl.toString()).startsWith("http://192.168.2.2/")
+        assertThat(bridgeCall.url.toString()).startsWith("http://192.168.2.2/")
     }
 
     @AfterEach

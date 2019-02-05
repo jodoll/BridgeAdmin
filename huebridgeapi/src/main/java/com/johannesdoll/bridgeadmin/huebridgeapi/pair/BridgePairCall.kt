@@ -14,7 +14,7 @@ class BridgePairCall(private val client: HttpClient, host: String) {
         private val BASE_URL = Url("http://localhost/api")
     }
 
-    private val url = BASE_URL.copy(
+    val url = BASE_URL.copy(
         host = host
     )
 

@@ -14,7 +14,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.junit.jupiter.api.AfterEach
@@ -37,7 +39,7 @@ class KtorTest {
 
     @Test
     fun testGet() {
-        runBlocking {
+        runBlockingWithTimeout {
             val response = client.get<String>("${URL}/api/newdeveloper")
             System.out.println(response)
         }
@@ -45,7 +47,7 @@ class KtorTest {
 
     @Test
     fun testPost() {
-        runBlocking {
+        runBlockingWithTimeout {
             val response = client.call("${URL}/api")
             System.out.println(response)
         }
@@ -53,7 +55,7 @@ class KtorTest {
 
     @Test
     fun testPostWithBody() {
-        runBlocking {
+        runBlockingWithTimeout {
             val response = client.post<String> {
                 url("${URL}/api")
                 contentType(ContentType.Application.Json)
@@ -73,4 +75,13 @@ class KtorTest {
         @SerialName("devicetype")
         val deviceType: String
     )
+
+    private fun <T> runBlockingWithTimeout(
+        timeout: Long = 3000,
+        suspendBlock: suspend CoroutineScope.() -> T
+    ) {
+        runBlocking {
+            withTimeout(timeout, suspendBlock)
+        }
+    }
 }

@@ -40,16 +40,16 @@ class KtorTest {
     @Test
     fun testGet() {
         runBlockingWithTimeout {
-            val response = client.get<String>("${URL}/api/newdeveloper")
-            System.out.println(response)
+            val response = client.get<String>("${Companion.URL}/api/newdeveloper")
+            println(response)
         }
     }
 
     @Test
     fun testPost() {
         runBlockingWithTimeout {
-            val response = client.call("${URL}/api")
-            System.out.println(response)
+            val response = client.call("${Companion.URL}/api")
+            println(response)
         }
     }
 
@@ -57,11 +57,11 @@ class KtorTest {
     fun testPostWithBody() {
         runBlockingWithTimeout {
             val response = client.post<String> {
-                url("${URL}/api")
+                url("${Companion.URL}/api")
                 contentType(ContentType.Application.Json)
                 body = AuthRequestBody("BridgeAdmin#ExploringTest")
             }
-            System.out.println(response)
+            println(response)
         }
     }
 

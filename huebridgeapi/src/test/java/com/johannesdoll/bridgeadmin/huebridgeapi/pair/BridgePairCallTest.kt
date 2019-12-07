@@ -5,11 +5,11 @@
 package com.johannesdoll.bridgeadmin.huebridgeapi.pair
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.MockHttpRequest
-import io.ktor.client.engine.mock.MockHttpResponse
+import io.ktor.client.engine.mock.*
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.request.HttpRequestData
+import io.ktor.client.request.HttpResponseData
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -22,11 +22,15 @@ import org.junit.jupiter.api.Test
 
 class BridgePairCallTest {
 
-    private fun getMockEngine(callback: suspend MockHttpRequest.() -> MockHttpResponse): HttpClient {
-        val engine = MockEngine(callback)
-        return HttpClient(engine) {
+    private fun getMockEngine(callback: suspend MockEngineConfig.(HttpRequestData) -> HttpResponseData): HttpClient {
+        return HttpClient(MockEngine) {
             install(JsonFeature) {
                 serializer = KotlinxSerializer()
+            }
+            engine {
+                addHandler {
+                    callback(it)
+                }
             }
         }
     }
@@ -34,10 +38,9 @@ class BridgePairCallTest {
     @Test
     fun `Given a device type, when executing call and pairing is needed, response is pairing press link`() {
         val client = getMockEngine {
-            MockHttpResponse(
-                call,
-                HttpStatusCode.OK,
+            respond(
                 ByteReadChannel("[{\"error\":{\"type\":101,\"address\":\"\",\"description\":\"link button not pressed\"}}]"),
+                HttpStatusCode.OK,
                 headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             )
         }
@@ -54,10 +57,9 @@ class BridgePairCallTest {
     @Test
     fun `Given a device type, when executing call and pairing is successful, response contains type`() {
         val client = getMockEngine {
-            MockHttpResponse(
-                call,
-                HttpStatusCode.OK,
+            respond(
                 ByteReadChannel("[{\"error\":{\"type\":101,\"address\":\"\",\"description\":\"link button not pressed\"}}]"),
+                HttpStatusCode.OK,
                 headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             )
         }

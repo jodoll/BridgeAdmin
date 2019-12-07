@@ -5,11 +5,11 @@
 package com.johannesdoll.bridgeadmin.huebridgeapi
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.MockHttpRequest
-import io.ktor.client.engine.mock.MockHttpResponse
+import io.ktor.client.engine.mock.*
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.request.HttpRequestData
+import io.ktor.client.request.HttpResponseData
 import io.ktor.client.request.get
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -46,11 +46,10 @@ class KotlinxSerializerTest {
     @Test
     fun `When deserializing a root level list, ktor throws an exception`() {
         val client = getMockEngine {
-            MockHttpResponse(
-                call,
-                HttpStatusCode.OK,
-                ByteReadChannel("[{\"value\":{\"nestedValue\":101}}]"),
-                headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            respond(
+                status = HttpStatusCode.OK,
+                content = ByteReadChannel("[{\"value\":{\"nestedValue\":101}}]"),
+                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             )
         }
 
@@ -64,12 +63,16 @@ class KotlinxSerializerTest {
 
     }
 
-    private fun getMockEngine(callback: suspend MockHttpRequest.() -> MockHttpResponse): HttpClient {
-        val engine = MockEngine(callback)
-        return HttpClient(engine) {
+    private fun getMockEngine(callback: suspend MockEngineConfig.(HttpRequestData) -> HttpResponseData): HttpClient {
+        return HttpClient(MockEngine) {
             install(JsonFeature) {
                 serializer = KotlinxSerializer().apply {
                     registerList(OuterObject.serializer())
+                }
+            }
+            engine {
+                addHandler {
+                    callback(it)
                 }
             }
         }

@@ -5,7 +5,9 @@
 package com.johannesdoll.bridgeadmin.huebridgeapi
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.*
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.MockEngineConfig
+import io.ktor.client.engine.mock.respond
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.HttpRequestData
@@ -18,10 +20,9 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.io.ByteReadChannel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Test
 
 class KotlinxSerializerTest {
@@ -36,38 +37,38 @@ class KotlinxSerializerTest {
     }
 
     /**
-     * This test asserts that a bug is still present where ktor is unable to deserialize root level lists, even when
-     * the serializer is provided explicitly. If this test fails the bug has either been fixed or a different exception
-     * is thrown.
+     * This test asserts that when specifying a list serializer explicitly, no exception is thrown.
+     *
+     * This was previously a bug.
      *
      * See also:
      * [https://stackoverflow.com/questions/52971069/ktor-serialize-deserialize-json-with-list-as-root-in-multiplatform]
      */
     @Test
-    fun `When deserializing a root level list, ktor throws an exception`() {
+    fun `Given a list is added to the KotlinxSerializer explicitly, when deserializing a root level list, ktor does not throw an exception`() {
         val client = getMockEngine {
             respond(
                 status = HttpStatusCode.OK,
                 content = ByteReadChannel("[{\"value\":{\"nestedValue\":101}}]"),
-                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                headers = headersOf(
+                    HttpHeaders.ContentType,
+                    ContentType.Application.Json.toString()
+                )
             )
         }
 
-        assertThatThrownBy {
+        assertThatCode {
             runBlocking {
                 client.get<List<OuterObject>>("http://localhost:8080/nestedObject")
             }
-        }.extracting(Throwable::cause)
-            .isInstanceOf(SerializationException::class.java)
-            .withFailMessage("Can't locate argument-less serializer for class kotlin.collections.List. For generic classes, such as lists, please provide serializer explicitly.")
-
+        }.doesNotThrowAnyException()
     }
 
     private fun getMockEngine(callback: suspend MockEngineConfig.(HttpRequestData) -> HttpResponseData): HttpClient {
         return HttpClient(MockEngine) {
             install(JsonFeature) {
                 serializer = KotlinxSerializer().apply {
-                    registerList(OuterObject.serializer())
+                    register(OuterObject.serializer().list)
                 }
             }
             engine {

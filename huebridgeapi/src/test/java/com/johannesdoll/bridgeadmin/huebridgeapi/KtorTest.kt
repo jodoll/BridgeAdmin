@@ -25,7 +25,10 @@ import org.junit.jupiter.api.Test
 
 class KtorTest {
 
-    private val URL = "http://192.168.2.168"
+    companion object {
+        private const val URL = "http://192.168.2.168"
+    }
+
     private lateinit var client: HttpClient
 
     @BeforeEach
